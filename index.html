@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vahini</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;1,300&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ============================
+     COLOURS — edit --accent to recolour everything
+     ============================ */
+  --ink: #1e1a15;
+  --ink-soft: #4a4540;
+  --ink-muted: #9a9288;
+  --paper: #f5f0e8;        /* cream background */
+  --paper-warm: #ede8df;
+  --paper-card: #f9f6f0;
+  --accent: #3d7a4a;       /* green — change this for a different accent */
+  --accent-soft: #eef5f0;
+  --border: rgba(30,26,21,0.1);
+  --border-strong: rgba(30,26,21,0.22);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.75;
+  font-size: 16px;
+  overflow-x: hidden;
+  cursor: crosshair;  /* zine cursor */
+}
+
+a { color: inherit; text-decoration: none; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--accent); }
+
+/* ============================
+   NAV — v.ahini logo top left
+   EDIT: nav links if you add new pages
+   ============================ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.2rem 2.5rem;
+  background: rgba(245,240,232,0.93);
+  backdrop-filter: blur(10px);
+  border-bottom: 0.5px solid var(--border-strong);
+}
+
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 12px; letter-spacing: 0.2em;
+  color: var(--ink-soft); text-transform: lowercase;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.15em;
+  color: var(--ink-muted); text-transform: lowercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* ============================
+   HERO — split two-column
+   grid paper texture lives here
+   EDIT: tagline, name, bio, button text
+   ============================ */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  padding-top: 4rem;
+  position: relative; overflow: hidden;
+  border-bottom: 0.5px solid var(--border-strong);
+}
+
+/* grid paper texture */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.hero-left {
+  padding: 5rem 3rem 3.5rem;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  border-right: 0.5px solid var(--border-strong);
+  position: relative; z-index: 2;
+}
+
+/* EDIT: small label above the name */
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.22em;
+  color: var(--accent); text-transform: lowercase;
+  margin-bottom: 1.75rem;
+}
+
+/* ============================
+   EDIT: the big name
+   "wonders." is the outlined ghost word — change it here
+   ============================ */
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(4rem, 7vw, 7rem);
+  font-weight: 400; line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 2rem;
+}
+.hero-name em {
+  font-style: italic;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent);
+}
+
+/* EDIT: short bio paragraph */
+.hero-desc {
+  font-size: 16px; color: var(--ink-soft);
+  max-width: 420px; line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.btn {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.15em; text-transform: lowercase;
+  padding: 0.8rem 1.75rem;
+  transition: all 0.2s; display: inline-block; cursor: crosshair;
+}
+.btn-primary {
+  background: var(--accent); color: #fff;
+  border: 1px solid var(--accent);
+}
+.btn-primary:hover { background: #2d5c38; border-color: #2d5c38; }
+.btn-ghost {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--border-strong);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.hero-right {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 4rem 3rem;
+  position: relative; z-index: 2; overflow: hidden;
+}
+
+/* faint orbital SVG decorative background */
+.hero-visual {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 340px; height: 340px; opacity: 0.05;
+  pointer-events: none;
+}
+
+/* ============================
+   EDIT: stats — update numbers and labels as things change
+   age is the third box — update it each year!
+   ============================ */
+.hero-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--border-strong);
+  border: 0.5px solid var(--border-strong);
+  position: relative; z-index: 2;
+}
+.stat-box { background: var(--paper); padding: 1.6rem; }
+.stat-num {
+  font-family: var(--serif);
+  font-size: 2.4rem; font-weight: 400; line-height: 1;
+  margin-bottom: 0.3rem; color: var(--accent);
+}
+.stat-label {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.15em;
+  color: var(--ink-muted); text-transform: lowercase;
+}
+
+/* ============================
+   SECTIONS — shared styles
+   ============================ */
+section { padding: 5rem 3rem; }
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.22em;
+  color: var(--accent); text-transform: lowercase;
+  display: block; margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400; line-height: 1.1;
+  margin-bottom: 2.5rem;
+}
+
+/* ============================
+   ABOUT
+   EDIT: bio paragraphs + interest items
+   ============================ */
+.about {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5rem; border-top: 0.5px solid var(--border-strong);
+}
+
+.about-text { font-size: 16px; color: var(--ink-soft); line-height: 1.85; }
+.about-text p + p { margin-top: 1rem; }
+.alias-note {
+  display: block; margin-top: 1.25rem;
+  font-family: var(--mono); font-size: 11px; color: var(--ink-muted);
+}
+
+.about-interests { display: flex; flex-direction: column; gap: 0; margin-top: 0.5rem; }
+
+/* EDIT: interest items — add/remove as needed */
+.interest-item {
+  display: flex; align-items: flex-start; gap: 1.25rem;
+  padding: 1.1rem 1.25rem;
+  border: 0.5px solid var(--border);
+  background: var(--paper-card);
+  margin-bottom: -0.5px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.interest-item:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+.interest-num {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--accent); padding-top: 2px; flex-shrink: 0;
+}
+.interest-name { font-weight: 500; font-size: 14px; margin-bottom: 0.15rem; }
+.interest-desc { font-size: 12px; color: var(--ink-muted); }
+
+/* ============================
+   PROJECTS — grid paper texture here too
+   EDIT: add new .project-card blocks to add projects
+   ============================ */
+.projects {
+  border-top: 0.5px solid var(--border-strong);
+  position: relative;
+}
+.projects::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.projects .section-tag,
+.projects .section-title,
+.projects-grid { position: relative; z-index: 2; }
+
+.projects-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border-strong);
+  border: 0.5px solid var(--border-strong);
+}
+
+.project-card {
+  background: var(--paper); padding: 2.25rem;
+  transition: background 0.2s; position: relative; overflow: hidden;
+}
+.project-card:hover { background: var(--paper-card); }
+.project-card::after {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 0; height: 3px; background: var(--accent);
+  transition: width 0.3s ease;
+}
+.project-card:hover::after { width: 100%; }
+
+.project-status {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.15em; text-transform: lowercase;
+  padding: 0.2rem 0.6rem; border: 1px solid;
+  display: inline-block; margin-bottom: 1.25rem;
+}
+.status-complete { border-color: var(--accent); color: var(--accent); }
+.status-planned { border-color: var(--ink-muted); color: var(--ink-muted); }
+
+.project-title {
+  font-family: var(--serif); font-size: 1.25rem;
+  font-weight: 400; margin-bottom: 0.6rem; line-height: 1.3;
+}
+.project-desc { font-size: 13.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 1.25rem; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  padding: 0.2rem 0.55rem; background: var(--paper-warm); color: var(--ink-soft);
+}
+
+/* ============================
+   WRITING
+   EDIT: add new .writing-item rows for new essays/papers
+   ============================ */
+.writing { border-top: 0.5px solid var(--border-strong); }
+
+.writing-list { display: flex; flex-direction: column; }
+.writing-item {
+  display: grid; grid-template-columns: 72px 1fr auto;
+  align-items: center; gap: 2rem;
+  padding: 1.6rem 0;
+  border-bottom: 0.5px solid var(--border);
+  color: inherit; transition: all 0.15s;
+}
+.writing-item:first-child { border-top: 0.5px solid var(--border); }
+.writing-item:hover .writing-title { color: var(--accent); }
+.writing-item:hover .writing-arrow { color: var(--accent); transform: translateX(4px); }
+
+.writing-date { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); }
+.writing-title { font-family: var(--serif); font-size: 1.1rem; margin-bottom: 0.25rem; transition: color 0.2s; }
+.writing-excerpt { font-size: 13px; color: var(--ink-soft); }
+.writing-arrow { color: var(--ink-muted); font-size: 16px; transition: all 0.2s; }
+
+/* ============================
+   PLATFORMS / FIND ME
+   EDIT: update hrefs and platform-handle when usernames change
+   ============================ */
+.platforms {
+  border-top: 0.5px solid var(--border-strong);
+  background: var(--ink); color: var(--paper);
+  position: relative;
+}
+.platforms::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,240,232,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,240,232,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.platforms .section-tag { color: rgba(245,240,232,0.4); }
+.platforms .section-title { color: var(--paper); position: relative; z-index: 2; }
+
+.platforms-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: rgba(245,240,232,0.12);
+  border: 0.5px solid rgba(245,240,232,0.12);
+  position: relative; z-index: 2;
+}
+.platform-card {
+  background: var(--ink); padding: 2.25rem 2rem;
+  display: block; transition: background 0.2s; position: relative;
+}
+.platform-card:hover { background: #2a2520; }
+.platform-card:hover .platform-arrow { color: var(--accent); }
+
+.platform-icon {
+  font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.22em; color: rgba(245,240,232,0.35);
+  text-transform: uppercase; margin-bottom: 1.1rem;
+}
+.platform-name { font-family: var(--serif); font-size: 1.2rem; margin-bottom: 0.5rem; }
+.platform-desc { font-size: 13.5px; color: rgba(245,240,232,0.55); line-height: 1.7; margin-bottom: 1.5rem; }
+.platform-handle { font-family: var(--mono); font-size: 10px; color: var(--accent); }
+.platform-arrow {
+  position: absolute; bottom: 2rem; right: 2rem;
+  font-size: 14px; color: rgba(245,240,232,0.25); transition: color 0.2s;
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+footer {
+  padding: 2rem 2.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 0.5px solid var(--border-strong);
+  background: var(--paper-warm);
+  font-family: var(--mono); font-size: 10px;
+  color: var(--ink-muted); letter-spacing: 0.08em;
+}
+
+/* ============================
+   ANIMATIONS
+   ============================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-eyebrow { animation: fadeUp 0.5s 0.05s ease both; }
+.hero-name    { animation: fadeUp 0.6s 0.15s ease both; }
+.hero-desc    { animation: fadeUp 0.6s 0.28s ease both; }
+.hero-cta     { animation: fadeUp 0.6s 0.38s ease both; }
+.hero-right   { animation: fadeUp 0.7s 0.2s  ease both; }
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { gap: 1.5rem; }
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-left { padding: 6rem 1.5rem 2.5rem; border-right: none; border-bottom: 0.5px solid var(--border-strong); }
+  .hero-right { padding: 2.5rem 1.5rem 3rem; }
+  .hero-visual { display: none; }
+  .about { grid-template-columns: 1fr; gap: 2.5rem; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .platforms-grid { grid-template-columns: 1fr; }
+  section { padding: 3.5rem 1.5rem; }
+  .writing-item { grid-template-columns: 1fr auto; gap: 1rem; }
+  .writing-date { display: none; }
+  footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV — EDIT: update links if you add new pages -->
+<nav>
+  <a href="#" class="nav-logo">v<span>.</span>ahini</a>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#writing">writing</a></li>
+    <li><a href="#find-me">find me</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <!-- EDIT: eyebrow tagline -->
+    <p class="hero-eyebrow">physics · photography · everything in between</p>
+
+    <!-- EDIT: name + ghost italic word -->
+    <h1 class="hero-name">vahini<br><em>wonders.</em></h1>
+
+    <!-- EDIT: bio sentence -->
+    <p class="hero-desc">15, asking too many questions. Chasing black holes, building telescopes, seeing the world in frames. Writing papers, sharing everything. Oxford someday — the universe, always.</p>
+
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">see my work</a>
+      <a href="#writing" class="btn btn-ghost">read my writing</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <!-- decorative orbital SVG -->
+    <svg class="hero-visual" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="180" cy="180" r="160" stroke="#1e1a15" stroke-width="0.5"/>
+      <circle cx="180" cy="180" r="120" stroke="#1e1a15" stroke-width="0.5"/>
+      <circle cx="180" cy="180" r="80"  stroke="#1e1a15" stroke-width="0.5"/>
+      <circle cx="180" cy="180" r="40"  stroke="#1e1a15" stroke-width="0.5"/>
+      <circle cx="180" cy="180" r="8"   fill="#1e1a15"/>
+      <ellipse cx="180" cy="180" rx="160" ry="40" stroke="#1e1a15" stroke-width="0.5"/>
+      <ellipse cx="180" cy="180" rx="160" ry="40" stroke="#1e1a15" stroke-width="0.5" transform="rotate(60 180 180)"/>
+      <ellipse cx="180" cy="180" rx="160" ry="40" stroke="#1e1a15" stroke-width="0.5" transform="rotate(120 180 180)"/>
+    </svg>
+
+    <!-- EDIT: stats — update numbers as things change, age each year -->
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-num">1</div>
+        <div class="stat-label">paper written</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">3</div>
+        <div class="stat-label">projects planned</div>
+      </div>
+      <div class="stat-box">
+        <!-- EDIT: age — update this each year -->
+        <div class="stat-num">15</div>
+        <div class="stat-label">years old</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" style="font-style:italic">∞</div>
+        <div class="stat-label">questions left</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div>
+    <span class="section-tag">about</span>
+    <h2 class="section-title">Curiosity<br>as a discipline.</h2>
+    <!-- EDIT: bio paragraphs -->
+    <div class="about-text">
+      <p>I'm Vahini — a pseudonym for a teenager in the UK who is deeply, genuinely obsessed with physics and what the universe is actually made of.</p>
+      <p>I started by reading everything I could find about black holes, then wrote a paper about the information paradox. Now I want to build things — telescopes, spectrometers, simulations — to get even closer to the questions that keep me up at night.</p>
+      <p>I also take photos. The two feel connected — both are about looking carefully at things and trying to understand what you're seeing.</p>
+      <span class="alias-note">Vahini is an alias. All writing and projects are original work.</span>
+    </div>
+  </div>
+
+  <div style="padding-top:4rem">
+    <span class="section-tag">interests</span>
+    <!-- EDIT: add/remove interest items as your focus shifts -->
+    <div class="about-interests">
+      <div class="interest-item">
+        <span class="interest-num">01</span>
+        <div>
+          <div class="interest-name">Black hole physics</div>
+          <div class="interest-desc">Information paradox, Hawking radiation, event horizons</div>
+        </div>
+      </div>
+      <div class="interest-item">
+        <span class="interest-num">02</span>
+        <div>
+          <div class="interest-name">Quantum mechanics</div>
+          <div class="interest-desc">Entanglement, superposition, quantum computing</div>
+        </div>
+      </div>
+      <div class="interest-item">
+        <span class="interest-num">03</span>
+        <div>
+          <div class="interest-name">Observational astronomy</div>
+          <div class="interest-desc">Spectroscopy, stellar composition, cosmological redshift, Vedic</div>
+        </div>
+      </div>
+      <div class="interest-item">
+        <span class="interest-num">04</span>
+        <div>
+          <div class="interest-name">Theoretical & mathematical physics</div>
+          <div class="interest-desc">Where the maths gets beautiful and strange</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="projects" id="projects">
+  <span class="section-tag">projects</span>
+  <h2 class="section-title">Building to understand.</h2>
+
+  <!-- EDIT: copy a .project-card block to add a new project -->
+  <div class="projects-grid">
+    <div class="project-card">
+      <span class="project-status status-complete">complete</span>
+      <h3 class="project-title">The black hole information paradox</h3>
+      <p class="project-desc">1,500 words on one of physics' deepest unsolved tensions — Hawking radiation, unitarity, and the firewall debate. My first piece of independent research.</p>
+      <div class="project-tags">
+        <span class="tag">black holes</span>
+        <span class="tag">quantum gravity</span>
+        <span class="tag">theory</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <span class="project-status status-planned">planned</span>
+      <h3 class="project-title">Homemade telescope + spectrometer</h3>
+      <p class="project-desc">Building a reflector telescope from scratch, then attaching a diffraction grating to capture real starlight spectra — composition, temperature, redshift.</p>
+      <div class="project-tags">
+        <span class="tag">optics</span>
+        <span class="tag">astrophysics</span>
+        <span class="tag">build</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <span class="project-status status-planned">planned</span>
+      <h3 class="project-title">Solar system simulator</h3>
+      <p class="project-desc">An interactive to-scale simulation of the solar system — including the Sun's orbit around the Milky Way. Click any planet for real orbital data. Mostly for fun.</p>
+      <div class="project-tags">
+        <span class="tag">coding</span>
+        <span class="tag">cosmology</span>
+        <span class="tag">interactive</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WRITING -->
+<section class="writing" id="writing">
+  <span class="section-tag">writing</span>
+  <h2 class="section-title">Papers & essays.</h2>
+
+  <!-- EDIT: copy a .writing-item to add a new essay or paper -->
+  <div class="writing-list">
+    <a href="https://yourstrulyvahini.substack.com" target="_blank" class="writing-item">
+      <span class="writing-date">2025</span>
+      <div>
+        <div class="writing-title">The black hole information paradox: what happens to what falls in?</div>
+        <div class="writing-excerpt">An exploration of one of physics' deepest unsolved problems — and why it matters.</div>
+      </div>
+      <span class="writing-arrow">→</span>
+    </a>
+    <a href="https://yourstrulyvahini.substack.com" target="_blank" class="writing-item">
+      <span class="writing-date">soon</span>
+      <div>
+        <div class="writing-title">What starlight tells us — a beginner's guide to spectroscopy</div>
+        <div class="writing-excerpt">Coming alongside the telescope build project.</div>
+      </div>
+      <span class="writing-arrow">→</span>
+    </a>
+  </div>
+  <div style="margin-top:2rem">
+    <a href="https://yourstrulyvahini.substack.com" target="_blank" class="btn btn-ghost">all writing on substack →</a>
+  </div>
+</section>
+
+<!-- FIND ME -->
+<section class="platforms" id="find-me">
+  <span class="section-tag" style="position:relative;z-index:2">find me</span>
+  <h2 class="section-title">Where I live online.</h2>
+
+  <!-- EDIT: update hrefs + platform-handle when usernames change -->
+  <div class="platforms-grid">
+    <a href="https://yourstrulyvahini.substack.com" target="_blank" class="platform-card">
+      <div class="platform-icon">substack</div>
+      <div class="platform-name">Papers & essays</div>
+      <div class="platform-desc">Long-form physics writing — papers, reflections, and things I'm figuring out.</div>
+      <div class="platform-handle">yourstrulyvahini</div>
+      <span class="platform-arrow">↗</span>
+    </a>
+    <a href="https://youtube.com" target="_blank" class="platform-card">
+      <div class="platform-icon">youtube</div>
+      <div class="platform-name">Build logs & videos</div>
+      <div class="platform-desc">Telescope builds, experiments, physics explainers. Mask on, always.</div>
+      <div class="platform-handle">coming soon</div>
+      <span class="platform-arrow">↗</span>
+    </a>
+    <a href="https://instagram.com/yourstrulyvahini" target="_blank" class="platform-card">
+      <div class="platform-icon">instagram</div>
+      <div class="platform-name">Photography</div>
+      <div class="platform-desc">The visual side — separate from physics, same curiosity.</div>
+      <div class="platform-handle">yourstrulyvahini</div>
+      <span class="platform-arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© vahini — an identity. all work is original.</span>
+  <span>yours truly, vahini</span>
+</footer>
+
+</body>
+</html>
